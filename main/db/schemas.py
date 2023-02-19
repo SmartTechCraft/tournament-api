@@ -5,6 +5,11 @@ class UserBase(BaseModel):
 
     username: str
 
+class UserLogin(UserBase):
+
+    username: str
+    password: str
+
 class UserCreate(UserBase):
 
     password: str
