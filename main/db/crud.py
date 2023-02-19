@@ -16,3 +16,6 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def validate_user_password(db: Session, username: str, password: str):
+    return db.query(models.User).filter(models.User.username == username, models.User.password == password).first()
