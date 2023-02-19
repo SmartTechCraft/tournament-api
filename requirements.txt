@@ -1,6 +1,7 @@
 fastapi
 uvicorn[standard]
 uvicorn
-dotenv
 sqlalchemy
 pydantic
+PyJWT
+python-decouple
