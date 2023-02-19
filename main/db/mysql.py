@@ -1,11 +1,11 @@
-from dotenv import dotenv_values
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from decouple import config
 
-config = dotenv_values('.env')
+CONNECTION_STRING = config("DB_CONNECT_STRING")
 
-engine = create_engine("mysql+pymysql://root:1234@localhost:3306/liga_backend") #NOTE: add env variable here
+engine = create_engine(CONNECTION_STRING) 
 connection = engine.connect()
 
 sessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
