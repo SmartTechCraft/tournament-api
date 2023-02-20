@@ -43,3 +43,7 @@ async def user_login(response: Response, user: schemas.UserLogin, db: Session=De
         response.headers["Access-Control-Allow-Origin"] = '*'
         return sign_jwt(user.username)
     raise HTTPException(status_code=401, detail="wrong username or password")
+
+@router.get('/test')
+def get_test():
+    return {"response": "it works"}
