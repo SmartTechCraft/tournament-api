@@ -34,14 +34,6 @@ async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
         return sign_jwt(user.username)
     raise HTTPException(status_code=401, detail="wrong username or password")
 
-@router.options('/login')
-async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
-    db_user = crud.get_user_by_username(db=db, username=user.username)
-    
-    if (db_user and crud.validate_user_password(db=db, username=user.username, password=user.password)):
-        return sign_jwt(user.username)
-    raise HTTPException(status_code=401, detail="wrong username or password")
-
 @router.get('/test')
 def get_test():
     return {"response": "it works"}
