@@ -27,19 +27,19 @@ def create_user(user: schemas.UserCreate, db: Session=Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 @router.post('/login')
-async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
+async def user_login(response: Response, user: schemas.UserLogin, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
     
     if (db_user and crud.validate_user_password(db=db, username=user.username, password=user.password)):
-        Response.headers["Access-Control-Allow-Origin"] = '*'
+        response.headers["Access-Control-Allow-Origin"] = '*'
         return sign_jwt(user.username)
     raise HTTPException(status_code=401, detail="wrong username or password")
 
 @router.options('/login')
-async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
+async def user_login(response: Response, user: schemas.UserLogin, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
     
     if (db_user and crud.validate_user_password(db=db, username=user.username, password=user.password)):
-        Response.headers["Access-Control-Allow-Origin"] = '*'
+        response.headers["Access-Control-Allow-Origin"] = '*'
         return sign_jwt(user.username)
     raise HTTPException(status_code=401, detail="wrong username or password")
