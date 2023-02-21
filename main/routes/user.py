@@ -2,15 +2,18 @@ import db.models as models
 import db.schemas as schemas
 
 from auth.auth_bearer import JwtBearer
-from auth.auth_handler import sign_jwt
+from auth.auth_handler import sign_jwt, decode_jwt
 
 from db.mysql import sessionLocal, engine
 from db import crud
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
+
+def get_jwt_content(token: str):
+    return decode_jwt(token=token)
 
 def get_db():
     db = sessionLocal()
@@ -34,6 +37,13 @@ async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
         return sign_jwt(user.username)
     raise HTTPException(status_code=401, detail="wrong username or password")
 
-@router.get('/test')
-def get_test():
-    return {"response": "it works"}
+@router.get('/get/{username}', dependencies=[Depends(JwtBearer())])
+def get_user(request: Request, username: str, db: Session=Depends(get_db)):
+    jwt = get_jwt_content(request.headers.get('authorization').split('Bearer ', 1)[1])
+    db_user = crud.get_user_by_username(db=db, username=username)
+
+    if (jwt):
+        if (jwt['user_name'] == username and username == db_user.username): #NOTE: we need to add roles
+            return db_user
+        raise HTTPException(status_code=401, detail="you have no permission to do this")
+    return {}
