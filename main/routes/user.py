@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
+roles = ['player', 'developer', 'admin', 'supervisor']
 
 def get_jwt_content(token: str):
     return decode_jwt(token=token)
@@ -25,6 +26,7 @@ def get_db():
 @router.post('/create', dependencies=[Depends(JwtBearer())], response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
+
     if (db_user):
         raise HTTPException(status_code=400, detail="There is already a user with that username registered")
     return crud.create_user(db=db, user=user)
@@ -34,7 +36,7 @@ async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
     
     if (db_user and crud.validate_user_password(db=db, username=user.username, password=user.password)):
-        return sign_jwt(user.username)
+        return sign_jwt(user.username, db_user.role)
     raise HTTPException(status_code=401, detail="wrong username or password")
 
 @router.get('/get/{username}', dependencies=[Depends(JwtBearer())])

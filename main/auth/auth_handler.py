@@ -16,9 +16,10 @@ def decode_jwt(token: str) -> dict:
     except:
         return {}
 
-def sign_jwt(user_name: str) -> Dict[str, str]:
+def sign_jwt(user_name: str, role: str) -> Dict[str, str]:
     payload = {
         "user_name": user_name,
+        "role": role,
         "expires": time.time() + 1800
     }
 
