@@ -23,3 +23,24 @@ class User(UserBase):
     class Config:
         
         orm_mode = True
+
+################ ROLES ################
+class RoleBase(BaseModel):
+
+    name: int
+
+class RoleCreate(RoleBase):
+
+    can_view_routes: list
+
+class Role(RoleBase):
+
+    id: int
+    level: int
+    can_ban: bool
+    can_support: bool
+    can_manage: bool
+
+    class Config:
+
+        orm_mode = True
