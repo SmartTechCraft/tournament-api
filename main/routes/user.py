@@ -11,6 +11,7 @@ from fastapi import Depends, APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
 CREATE_USER_ROUTE = '/create'
+GET_USER_ROUTE = 'user/get/{username}'
 
 models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
@@ -49,11 +50,11 @@ async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
         return sign_jwt(user.username, db_user.role)
     raise HTTPException(status_code=401, detail="wrong username or password")
 
-@router.get('/get/{username}', dependencies=[Depends(JwtBearer())])
+@router.get(GET_USER_ROUTE, dependencies=[Depends(JwtBearer())])
 def get_user(request: Request, username: str, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=username)
 
-    if (has_permission_to_view(CREATE_USER_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
+    if (has_permission_to_view(GET_USER_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
         if (db_user):
             return {"username": db_user.username}
         raise HTTPException(status_code=404, detail="user not found")
