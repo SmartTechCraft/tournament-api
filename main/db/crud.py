@@ -19,3 +19,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def validate_user_password(db: Session, username: str, password: str):
     return db.query(models.User).filter(models.User.username == username, models.User.password == password).first()
+
+########## ROLES ##########
+def get_role_by_name(db: Session, role_name: str):
+    return db.query(models.Role).filter(models.Role.name == role_name).first()
