@@ -11,7 +11,7 @@ from fastapi import Depends, APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 
 CREATE_USER_ROUTE = '/create'
-GET_USER_ROUTE = 'user/get/{username}'
+GET_USER_ROUTE = '/get/{username}'
 
 models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
