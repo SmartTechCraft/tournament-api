@@ -38,7 +38,6 @@ def get_db():
 @router.get(GET_ROLE_BY_ID_ROUTE)
 def get_role_by_id(request: Request, id: int, db: Session=Depends(get_db)):
     db_role = crud.get_role_by_id(db=db, role_id=id)
-    db_user = crud.get_user_by_username(db=db, username=get_jwt_content(request)["user_name"])
 
     if (db_role):
         if (has_permission_to_view(GET_ROLE_BY_ID_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
