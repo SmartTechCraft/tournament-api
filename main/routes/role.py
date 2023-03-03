@@ -41,6 +41,6 @@ def get_role_by_id(request: Request, id: int, db: Session=Depends(get_db)):
 
     if (db_role):
         if (has_permission_to_view(GET_ROLE_BY_ID_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
-                return db_role
+                return {"role_data": db_role}
         raise HTTPException(status_code=405, detail="You are not allowed to view this route")
     raise HTTPException(status_code=404, detail="role not found")
