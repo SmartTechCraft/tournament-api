@@ -18,6 +18,9 @@ class View(Permission): #NOTE: we should optimise this
         self._role = self._crud.get_role_by_name(db=self._db, role_name=self._db_user.role)
 
     def has_permission(self, route: str) -> bool:
-        if (route in self._role.can_view_routes['routes'] or '*' in self._role.can_view_routes['routes']):
-            return True 
+
+        if (self._role):
+            if (route in self._role.can_view_routes['routes'] or '*' in self._role.can_view_routes['routes']):
+                return True 
+            return False
         return False
