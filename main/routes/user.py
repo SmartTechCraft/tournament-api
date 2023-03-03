@@ -17,8 +17,11 @@ models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
 
 def get_jwt_content(request: Request):
-    token = request.headers.get('authorization').split('Bearer ', 1)[1]
-    return decode_jwt(token=token)
+    header = request.headers.get('authorization')
+    if (header):
+        token = header.split('Bearer ', 1)[1]
+        return decode_jwt(token=token)
+    raise HTTPException(status_code=405, detail="no authorization header found")
 
 def has_permission_to_view(route: str, db, db_user) -> bool:
     if (Permission(db=db, db_user=db_user, crud=crud).can_view(route=route)):

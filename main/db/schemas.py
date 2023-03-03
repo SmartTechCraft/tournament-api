@@ -27,7 +27,7 @@ class User(UserBase):
 ################ ROLES ################
 class RoleBase(BaseModel):
 
-    name: int
+    name: str
 
 class RoleCreate(RoleBase):
 

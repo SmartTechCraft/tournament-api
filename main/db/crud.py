@@ -23,3 +23,6 @@ def validate_user_password(db: Session, username: str, password: str):
 ########## ROLES ##########
 def get_role_by_name(db: Session, role_name: str):
     return db.query(models.Role).filter(models.Role.name == role_name).first()
+
+def get_role_by_id(db: Session, role_id: int):
+    return db.query(models.Role).filter(models.Role.id == role_id).first()
