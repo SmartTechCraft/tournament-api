@@ -39,12 +39,10 @@ def get_db():
 def create_user(request: Request, user: schemas.UserCreate, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
 
-    if (has_permission_to_view(CREATE_USER_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
-        if (db_user):
-            raise HTTPException(status_code=400, detail="There is already a user with that username registered")
-        return crud.create_user(db=db, user=user)
-    raise HTTPException(status_code=405, detail="You are not allowed to view this route")
-
+    if (db_user):
+        raise HTTPException(status_code=400, detail="There is already a user with that username registered")
+    return crud.create_user(db=db, user=user)
+    
 @router.post('/login')
 async def user_login(user: schemas.UserLogin, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
