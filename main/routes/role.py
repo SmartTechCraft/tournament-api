@@ -14,6 +14,7 @@ models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
 
 GET_ROLE_BY_ID_ROUTE = '/get/{id}'
+GET_ALL_ROLES = '/get'
 
 def get_jwt_content(request: Request):
     header = request.headers.get('authorization')
@@ -44,3 +45,13 @@ def get_role_by_id(request: Request, id: int, db: Session=Depends(get_db)):
                 return {"role_data": db_role}
         raise HTTPException(status_code=405, detail="You are not allowed to view this route")
     raise HTTPException(status_code=404, detail="role not found")
+
+@router.get(GET_ALL_ROLES)
+def get_roles(request: Request, db: Session=Depends(get_db)):
+    db_roles = crud.get_all_roles(db=db)
+
+    if (db_roles):
+        if (has_permission_to_view(GET_ALL_ROLES, db, crud.get_user_by_username(db=db, username=get_jwt_content(request)['user_name']))):
+            return {"roles": db_roles}
+        raise HTTPException(status_code=405, detail="You are not allowed to view this route")
+    raise HTTPException(status_code=404, detail="no roles found")
