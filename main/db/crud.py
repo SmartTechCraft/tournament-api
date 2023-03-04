@@ -26,3 +26,6 @@ def get_role_by_name(db: Session, role_name: str):
 
 def get_role_by_id(db: Session, role_id: int):
     return db.query(models.Role).filter(models.Role.id == role_id).first()
+
+def get_all_roles(db: Session):
+    return db.query(models.Role).all()
