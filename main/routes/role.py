@@ -15,6 +15,7 @@ router = APIRouter()
 
 GET_ROLE_BY_ID_ROUTE = '/get/{id}'
 GET_ALL_ROLES = '/get'
+CREATE_ROLE = '/role/create'
 
 def get_jwt_content(request: Request):
     header = request.headers.get('authorization')
@@ -55,3 +56,13 @@ def get_roles(request: Request, db: Session=Depends(get_db)):
             return {"roles": db_roles}
         raise HTTPException(status_code=405, detail="You are not allowed to view this route")
     raise HTTPException(status_code=404, detail="no roles found")
+
+@router.post("/create", response_model=schemas.Role, dependencies=[Depends(JwtBearer())])
+def create_new_role(request: Request, role: schemas.RoleCreate, db: Session=Depends(get_db)):
+    db_role = crud.get_role_by_name(db=db, role_name=role.name)
+
+    if (has_permission_to_view(CREATE_ROLE, db, crud.get_user_by_username(db=db, username=get_jwt_content(request)['user_name']))):
+        if (db_role):
+            raise HTTPException(status_code=400, detail="There is already a role with that name")
+        return crud.create_role(db=db, role=role)
+    raise HTTPException(status_code=405, detail="You are not allowed to view this route")
