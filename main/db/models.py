@@ -17,7 +17,7 @@ class User(Base):
 class Role(Base):
 
     __tablename__ = "roles"
-
+    
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(64))
     level = Column(Integer, default=1)

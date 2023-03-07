@@ -28,10 +28,14 @@ class User(UserBase):
 class RoleBase(BaseModel):
 
     name: str
+    level: int
+    can_ban: bool
+    can_support: bool
+    can_manage: bool
 
 class RoleCreate(RoleBase):
 
-    can_view_routes: list
+    can_view_routes: dict
 
 class Role(RoleBase):
 
