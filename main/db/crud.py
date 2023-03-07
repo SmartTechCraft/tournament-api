@@ -29,3 +29,10 @@ def get_role_by_id(db: Session, role_id: int):
 
 def get_all_roles(db: Session):
     return db.query(models.Role).all()
+
+def create_role(db: Session, role: schemas.RoleCreate):
+    db_role = models.Role(name=role.name, level=role.level, can_ban=role.can_ban, can_support=role.can_support, can_manage=role.can_manage, can_view_routes=role.can_view_routes)
+    db.add(db_role)
+    db.commit()
+    db.refresh(db_role)
+    return db_role
