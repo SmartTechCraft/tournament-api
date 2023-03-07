@@ -35,8 +35,8 @@ def get_db():
     finally:
         db.close()
 
-@router.post(CREATE_USER_ROUTE, dependencies=[Depends(JwtBearer())], response_model=schemas.User)
-def create_user(request: Request, user: schemas.UserCreate, db: Session=Depends(get_db)):
+@router.post(CREATE_USER_ROUTE, response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
 
     if (db_user):
