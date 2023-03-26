@@ -8,8 +8,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(30), unique=True, index=True)
-    email = Column(String(45), unique=True)
-    steamid = Column(Integer, unique=True)
+    email = Column(String(64), unique=True)
+    steamid = Column(String(128), unique=True)
     password = Column(String(45)) #NOTE: need to hash
     is_active = Column(Boolean, default=True)
     role = Column(String(30), default="player")
