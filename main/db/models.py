@@ -8,10 +8,11 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(30), unique=True, index=True)
+    email = Column(String(45), unique=True)
+    steamid = Column(Integer, unique=True)
     password = Column(String(45)) #NOTE: need to hash
     is_active = Column(Boolean, default=True)
     role = Column(String(30), default="player")
-
     #items = relationship("Item", back_populates="owner")
 
 class Role(Base):
