@@ -5,4 +5,4 @@ sqlalchemy
 pydantic
 PyJWT
 python-decouple
-steam
+python-steam-api
