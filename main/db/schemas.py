@@ -13,6 +13,8 @@ class UserLogin(UserBase):
 class UserCreate(UserBase):
 
     password: str
+    email: str
+    steamid: int
 
 class User(UserBase):
 

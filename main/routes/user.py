@@ -38,9 +38,15 @@ def get_db():
 @router.post(CREATE_USER_ROUTE, response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session=Depends(get_db)):
     db_user = crud.get_user_by_username(db=db, username=user.username)
+    db_user_email = crud.get_user_by_email(db=db, email=user.email)
+    db_user_steamid = crud.get_user_by_steamid(db=db, steamid=user.steamid)
 
     if (db_user):
         raise HTTPException(status_code=400, detail="There is already a user with that username registered")
+    if (db_user_email):
+        raise HTTPException(status_code=400, detail="There is already a user with that email registered")
+    if (db_user_steamid):
+        raise HTTPException(status_code=404, detail="There is already a user with that steamid registered")
     return crud.create_user(db=db, user=user)
     
 @router.post('/login')
