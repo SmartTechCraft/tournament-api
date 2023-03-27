@@ -63,6 +63,6 @@ def get_user(request: Request, username: str, db: Session=Depends(get_db)):
 
     if (has_permission_to_view(GET_USER_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
         if (db_user):
-            return {"username": db_user.username}
+            return {"username": db_user.username, "role": db_user.role}
         raise HTTPException(status_code=404, detail="user not found")
     raise HTTPException(status_code=405, detail="You are not allowed to view this route")
