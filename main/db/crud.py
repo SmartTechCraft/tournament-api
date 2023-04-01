@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import update
+import json
 from . import models, schemas
 
 def get_user(db: Session, user_id: int):
@@ -36,9 +38,16 @@ def get_role_by_id(db: Session, role_id: int):
 def get_all_roles(db: Session):
     return db.query(models.Role).all()
 
-def create_role(db: Session, role: schemas.RoleCreate):
+def create_role(db: Session, role: schemas.RoleCreate): #NOTE: not used
     db_role = models.Role(name=role.name, level=role.level, can_ban=role.can_ban, can_support=role.can_support, can_manage=role.can_manage, can_view_routes=role.can_view_routes)
     db.add(db_role)
     db.commit()
     db.refresh(db_role)
+    return db_role
+
+def delete_role(db: Session, role_id: int): #NOTE: not used
+    db_role = db.query(models.Role).filter_by(id=role_id).delete()
+    db.add(db_role)
+    db.commit()
+    db.refresh()
     return db_role

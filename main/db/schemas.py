@@ -39,6 +39,14 @@ class RoleCreate(RoleBase):
 
     can_view_routes: dict
 
+class RoleUpdate(RoleBase):
+
+    level: int
+    can_ban: bool
+    can_support: bool
+    can_manage: bool
+    name: str
+
 class Role(RoleBase):
 
     id: int

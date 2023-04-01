@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 CREATE_USER_ROUTE = '/create'
 GET_USER_ROUTE = '/get/{username}'
+GET_ALL_USERS_ROUTE = '/getall'
 
 models.Base.metadata.create_all(bind=engine)
 router = APIRouter()
@@ -65,4 +66,14 @@ def get_user(request: Request, username: str, db: Session=Depends(get_db)):
         if (db_user):
             return {"username": db_user.username, "role": db_user.role}
         raise HTTPException(status_code=404, detail="user not found")
+    raise HTTPException(status_code=405, detail="You are not allowed to view this route")
+
+@router.get(GET_ALL_USERS_ROUTE, dependencies=[Depends(JwtBearer)])
+def get_all_users(request: Request, db: Session=Depends(get_db)):
+    db_users = crud.get_users(db=db)
+
+    if (has_permission_to_view(GET_ALL_USERS_ROUTE, db, crud.get_user_by_username(db=db,username=get_jwt_content(request)['user_name']))):
+        if (db_users):
+            return {"users": db_users}
+        raise HTTPException(status_code=404, detail="no users found")
     raise HTTPException(status_code=405, detail="You are not allowed to view this route")

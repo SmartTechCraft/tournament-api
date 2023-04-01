@@ -16,6 +16,8 @@ router = APIRouter()
 GET_ROLE_BY_ID_ROUTE = '/get/{id}'
 GET_ALL_ROLES = '/get'
 CREATE_ROLE = '/role/create'
+UPDATE_ROLE = '/update/{id}'
+DELETE_ROLE = '/delete/{id}'
 
 def get_jwt_content(request: Request):
     header = request.headers.get('authorization')
@@ -66,3 +68,32 @@ def create_new_role(request: Request, role: schemas.RoleCreate, db: Session=Depe
             raise HTTPException(status_code=400, detail="There is already a role with that name")
         return crud.create_role(db=db, role=role)
     raise HTTPException(status_code=405, detail="You are not allowed to view this route")
+
+@router.put(UPDATE_ROLE, dependencies=[Depends(JwtBearer)])
+def update_role(request: Request, id: int, role: schemas.RoleUpdate, db: Session=Depends(get_db)):
+    db_role = crud.get_role_by_id(db=db, role_id=id)
+
+    if (has_permission_to_view(UPDATE_ROLE, db, crud.get_user_by_username(db=db, username=get_jwt_content(request)['user_name']))):
+        if (db_role):
+            update_data = role.dict(exclude_unset=True) #NOTE: WE NEED TO ADD THIS TO THE CRUD!
+            db.query(models.Role).filter(models.Role.id == id).update(update_data)
+            db.commit()
+            db.refresh(db_role)
+            return db_role
+        raise HTTPException(status_code=404, detail="Role not found")
+    raise HTTPException(status_code=405, detail="You are not allowed to view this route")
+
+@router.delete(DELETE_ROLE, dependencies=[Depends(JwtBearer)]) #NOTE: WE NEED TO ADD THIS TO THE CRUD!
+def delete_role(request: Request, id: int, db: Session=Depends(get_db)):
+    db_role = crud.get_role_by_id(db=db, role_id=id)
+
+    if not db_role:
+        raise HTTPException(status_code=404, detail="Role not found")
+
+    if not has_permission_to_view(UPDATE_ROLE, db, crud.get_user_by_username(db=db, username=get_jwt_content(request)['user_name'])):
+        raise HTTPException(status_code=403, detail="User does not have permission to delete roles")
+
+    db.delete(db_role)
+    db.commit()
+
+    return {"message": "Role deleted successfully"}
